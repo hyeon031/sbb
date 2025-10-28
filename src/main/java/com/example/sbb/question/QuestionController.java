@@ -24,7 +24,7 @@ public class QuestionController {
     @GetMapping("/list")
     public String list(Model model){
         List<Question> questionList = this.questionService.getList();
-        model.addAttribute("questionsList", questionList);
+        model.addAttribute("questionList", questionList);
         return "question_list";
     }
 
@@ -33,5 +33,10 @@ public class QuestionController {
         Question question = this.questionService.getQuestion(id);
         model.addAttribute("question", question);
         return "question_detail";
+    }
+
+    @GetMapping("/create")
+    public String questionCreate(){
+        return "question_form";
     }
 }
