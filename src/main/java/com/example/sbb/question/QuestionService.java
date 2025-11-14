@@ -1,21 +1,18 @@
 package com.example.sbb.question;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.springframework.data.domain.Sort;
-
-import java.util.List;
-import org.springframework.stereotype.Service;
+import com.example.sbb.user.SiteUser;
+import com.example.sbb.DataNotFoundException;
 import lombok.RequiredArgsConstructor;
-import java.time.LocalDateTime;
-
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
-import com.example.sbb.DataNotFoundException;
 
 @RequiredArgsConstructor
 @Service
@@ -36,11 +33,13 @@ public class QuestionService {
         }
     }
 
-    public void create(String subject, String content){
+    public void create(String subject, String content, SiteUser user){
         Question q = new Question();
         q.setSubject(subject);
         q.setContent(content);
         q.setCreateDate(LocalDateTime.now());
+        q.setAuthor(user);
+
         this.questionRepository.save(q);
     }
 
