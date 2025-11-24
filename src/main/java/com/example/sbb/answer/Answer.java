@@ -1,10 +1,13 @@
 package com.example.sbb.answer;
 
-import com.example.sbb.user.SiteUser;
+import java.util.Set;
+import jakarta.persistence.ManyToMany;
 import com.example.sbb.question.Question;
+import com.example.sbb.user.SiteUser;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
 import java.time.LocalDateTime;
 
 @Getter
@@ -27,4 +30,7 @@ public class Answer {
 
     @ManyToOne
     private SiteUser author;
+
+    @ManyToMany
+    Set<SiteUser> voter;
 }
