@@ -21,7 +21,8 @@
             </div>
             <div class="my-3">
                 <a href="javascript:void(0);" class="recommend btn btn-sm btn-outline-secondary"
-                   th:data-uri="@{|/question/vote/${question.id}|}">
+                   th:data-uri="@{|/question/vote/${question.id}|}"
+                th:data-voted="${question.voter.contains(#authentication.getPrincipal()) ? 'true' : 'false'}">
                     추천
                     <span class="badge rounded-pill bg-success" th:text="${#lists.size(question.voter)}"></span>
                 </a>
@@ -57,7 +58,8 @@
             </div>
             <div class="my-3">
                 <a href="javascript:void(0);" class="recommend btn btn-sm btn-outline-secondary"
-                   th:data-uri="@{|/answer/vote/${answer.id}|}">
+                   th:data-uri="@{|/answer/vote/${answer.id}|}"
+                th:data-voted="${answer.voter.contains(#authentication.getPrincipal()) ? 'true' : 'false'}">
                     추천
                     <span class="badge rounded-pill bg-success" th:text="${#lists.size(answer.voter)}"></span>
                 </a>
@@ -96,7 +98,11 @@
     const recommend_elements = document.getElementsByClassName("recommend");
     Array.from(recommend_elements).forEach(function(element) {
         element.addEventListener('click', function() {
-            if(confirm("정말로 추천하시겠습니까?")) {
+            let isVoted = element.getAttribute('data-voted');
+            let message = isVoted ? "정말로 추천하시겠습니까" :
+                "정말로 추천을 취소하시겠습니까?";
+
+            if(confirm(message)) {
                 location.href = this.dataset.uri;
             };
         });

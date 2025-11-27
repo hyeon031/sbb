@@ -88,4 +88,9 @@ public class QuestionService {
         question.getVoter().add(siteUser);
         this.questionRepository.save(question);
     }
+
+    public void deleteVote(Question question, SiteUser siteUser) {
+        question.getVoter().remove(siteUser);
+        this.questionRepository.save(question);
+    }
 }
