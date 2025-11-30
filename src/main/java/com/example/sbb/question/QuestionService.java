@@ -23,16 +23,14 @@ public class QuestionService {
 
     private final QuestionRepository questionRepository;
 
-    public List<Question> getList(){
-        return this.questionRepository.findAll();
-    }
-
-    private Specification<Question> search(String kw){
-        return new Specification<>(){
+    @SuppressWarnings("unused")
+    private Specification<Question> search(String kw) {
+        return new Specification<>() {
             private static final long serialVersionUID = 1L;
+
             @Override
-            public Predicate toPredicate(Root<Question> q, CriteriaQuery<?> query, CriteriaBuilder cb){
-                query.distinct(true);
+            public Predicate toPredicate(Root<Question> q, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                query.distinct(true); // 중복을 제거
                 Join<Question, SiteUser> u1 = q.join("author", JoinType.LEFT);
                 Join<Question, Answer> a = q.join("answerList", JoinType.LEFT);
                 Join<Answer, SiteUser> u2 = a.join("author", JoinType.LEFT);
@@ -45,52 +43,44 @@ public class QuestionService {
         };
     }
 
-    public Question getQuestion(Integer id){
+    public Page<Question> getList(int page, String kw) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("createDate"));
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
+        return this.questionRepository.findAllByKeyword(kw, pageable);
+    }
+
+    public Question getQuestion(Integer id) {
         Optional<Question> question = this.questionRepository.findById(id);
-        if(question.isPresent()){
+        if (question.isPresent()) {
             return question.get();
-        } else{
+        } else {
             throw new DataNotFoundException("question not found");
         }
     }
 
-    public void create(String subject, String content, SiteUser user){
+    public void create(String subject, String content, SiteUser user) {
         Question q = new Question();
         q.setSubject(subject);
         q.setContent(content);
         q.setCreateDate(LocalDateTime.now());
         q.setAuthor(user);
-
         this.questionRepository.save(q);
     }
 
-    public Page<Question> getList(int page, String kw){
-        List<Sort.Order> sorts = new ArrayList<>();
-        sorts.add(Sort.Order.desc("createDate"));
-        Pageable pageable = PageRequest.of(page,10,Sort.by(sorts));
-        Specification<Question> spec = search(kw);
-//        return this.questionRepository.findAll(spec, pageable);
-        return this.questionRepository.findAllByKeyword(kw, pageable);
-    }
-
-    public void modify(Question question, String subject, String content){
+    public void modify(Question question, String subject, String content) {
         question.setSubject(subject);
         question.setContent(content);
         question.setModifyDate(LocalDateTime.now());
         this.questionRepository.save(question);
     }
 
-    public void delete(Question question){
+    public void delete(Question question) {
         this.questionRepository.delete(question);
     }
 
     public void vote(Question question, SiteUser siteUser) {
         question.getVoter().add(siteUser);
-        this.questionRepository.save(question);
-    }
-
-    public void deleteVote(Question question, SiteUser siteUser) {
-        question.getVoter().remove(siteUser);
         this.questionRepository.save(question);
     }
 }
