@@ -48,4 +48,9 @@ public class AnswerService {
         answer.getVoter().add(siteUser);
         this.answerRepository.save(answer);
     }
+
+    public void cancelVote(Answer answer, SiteUser siteUser) {
+        answer.getVoter().remove(siteUser);
+        this.answerRepository.save(answer);
+    }
 }
