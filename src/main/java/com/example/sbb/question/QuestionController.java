@@ -99,7 +99,13 @@ public class QuestionController {
     public String questionVote(Principal principal, @PathVariable("id") Integer id) {
         Question question = this.questionService.getQuestion(id);
         SiteUser siteUser = this.userService.getUser(principal.getName());
-        this.questionService.vote(question, siteUser);
+
+        if(!question.getVoter().contains(siteUser)){
+            this.questionService.vote(question, siteUser);
+        } else {
+            this.questionService.cancelVote(question, siteUser);
+        }
+
         return String.format("redirect:/question/detail/%s", id);
     }
 }
