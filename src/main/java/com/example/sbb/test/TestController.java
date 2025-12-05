@@ -28,6 +28,9 @@ public class TestController {
 
     @GetMapping(value = "/detail/{id}")
     public String details(Model model, @PathVariable("id") Integer id){
+
+        Question question = this.testService.getQuestions(id);
+        model.addAttribute("question",question);
         return "test_detail";
     }
 }
